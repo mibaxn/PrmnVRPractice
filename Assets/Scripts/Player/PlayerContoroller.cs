@@ -37,7 +37,7 @@ public class PlayerContoroller : MonoBehaviour
         _player.AddForce(force);
         _player.velocity = ClampSpd(_player.velocity, _limitXzSpd, _limitYSpd);
         //Debug.Log(new Vector2(_player.velocity.x, _player.velocity.z).magnitude);
-        Debug.Log(_player.velocity.y);
+        //Debug.Log(_player.velocity.y);
     }
 
     /// <summary>

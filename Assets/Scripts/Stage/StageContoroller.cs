@@ -4,24 +4,53 @@ using UnityEngine;
 
 public class StageContoroller : MonoBehaviour
 {
-    [Header("障害物となるオブジェクト")]
-    [SerializeField] private GameObject[] _obstacles;
-
     [SerializeField] private GameObject _player;
 
-    /// <summary>
-    /// 障害物生成の基準となる位置
-    /// x,z座標の情報を用いる.y座標はプレイヤー座標を基準とする.
-    /// </summary>
+    [Header("障害物となるオブジェクト(オブジェクト,y軸の幅)"), SerializeField]
+    private GameObject[] _obstacles;
+
+    [Header("障害物の基準の位置"), SerializeField]
     private Vector3 _center;
+
+    [Header("障害物のy軸間隔の最小値, 最大値"), SerializeField]
+    private Vector2 _randomRangeY;
+
+    [Header("障害物のx軸間隔の最小値, 最大値"), SerializeField]
+    private Vector2 _randomRangeX;
+
+    [Header("障害物のz軸間隔の最小値, 最大値"), SerializeField]
+    private Vector2 _randomRangeZ;
+
 
     void Start()
     {
-        _center = new Vector3(transform.position.x, 0, transform.position.z);
+        CreateStage();
     }
 
-    void Update()
+
+    /// <summary>
+    /// ステージに障害物を生成する
+    /// </summary>
+    void CreateStage()
     {
-        
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        Vector3 pos = _center;
+        while (true)
+        {
+            var addObj = _obstacles[Random.Range(0, _obstacles.Length)];
+            if (pos.y - addObj.transform.lossyScale.y <= 0) { break; }
+
+            pos -= new Vector3(0, addObj.transform.lossyScale.y / 2, 0);
+
+            var x = Random.Range(_randomRangeX.x, _randomRangeX.y);
+            var z = Random.Range(_randomRangeZ.x, _randomRangeZ.y);
+            var obj = Instantiate(addObj, pos + new Vector3(x, 0, z), Quaternion.identity);
+
+            pos -= new Vector3(0, addObj.transform.lossyScale.y / 2 + Random.Range(_randomRangeY.x, _randomRangeY.y), 0);
+        }
     }
 }
