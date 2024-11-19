@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class StageContoroller : MonoBehaviour
 {
-    [SerializeField] private GameObject _player;
-
-    [Header("障害物となるオブジェクト(オブジェクト,y軸の幅)"), SerializeField]
+    [Header("障害物となるオブジェクト"), SerializeField]
     private GameObject[] _obstacles;
 
     [Header("障害物の基準の位置"), SerializeField]
@@ -15,11 +13,8 @@ public class StageContoroller : MonoBehaviour
     [Header("障害物のy軸間隔の最小値, 最大値"), SerializeField]
     private Vector2 _randomRangeY;
 
-    [Header("障害物のx軸間隔の最小値, 最大値"), SerializeField]
-    private Vector2 _randomRangeX;
-
-    [Header("障害物のz軸間隔の最小値, 最大値"), SerializeField]
-    private Vector2 _randomRangeZ;
+    [Header("障害物のx,z軸間隔の最小値, 最大値"), SerializeField]
+    private Vector2 _randomRangeXz;
 
 
     void Start()
@@ -33,11 +28,6 @@ public class StageContoroller : MonoBehaviour
     /// </summary>
     void CreateStage()
     {
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
-
         Vector3 pos = _center;
         while (true)
         {
@@ -46,9 +36,9 @@ public class StageContoroller : MonoBehaviour
 
             pos -= new Vector3(0, addObj.transform.lossyScale.y / 2, 0);
 
-            var x = Random.Range(_randomRangeX.x, _randomRangeX.y);
-            var z = Random.Range(_randomRangeZ.x, _randomRangeZ.y);
-            var obj = Instantiate(addObj, pos + new Vector3(x, 0, z), Quaternion.identity);
+            var x = Random.Range(_randomRangeXz.x, _randomRangeXz.y);
+            var z = Random.Range(_randomRangeXz.x, _randomRangeXz.y);
+            Instantiate(addObj, pos + new Vector3(x, 0, z), Quaternion.identity);
 
             pos -= new Vector3(0, addObj.transform.lossyScale.y / 2 + Random.Range(_randomRangeY.x, _randomRangeY.y), 0);
         }

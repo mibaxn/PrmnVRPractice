@@ -6,9 +6,26 @@ using UnityEngine;
 public class PlayerContoroller : MonoBehaviour
 {
     private Rigidbody _player;
-    [SerializeField] private int _magForce = 20;
-    [SerializeField] private int _limitXzSpd = 10;
-    [SerializeField] private int _limitYSpd = 60;
+
+    [Header("プレイヤーのHP.衝突時にy軸速さの分だけ減少する"), SerializeField]
+    private float _hp;
+    public float Hp { get => _hp; }
+
+    [Header("移動の時に加える力の大きさ"), SerializeField]
+    private float _magForce;
+
+    [Header("xz平面の速さの上限"), SerializeField]
+    private float _limitXzSpd;
+
+    [Header("y軸速さの初期上限"), SerializeField]
+    private float _limitYSpd;
+
+    [Header("y軸速さの上限の最終的な増加量"), SerializeField]
+    private float _addYSpd;
+
+    [Header("ステージの長さ"), SerializeField]
+    private int _stageLength;
+
 
     void Start()
     {
@@ -17,6 +34,8 @@ public class PlayerContoroller : MonoBehaviour
 
     void Update()
     {
+        if (_hp <= 0) { Die(); }
+
         var force = Vector3.zero;
         if (Input.GetKey(KeyCode.D))
         {
@@ -35,9 +54,9 @@ public class PlayerContoroller : MonoBehaviour
             force -= new Vector3(0, 0, _magForce);
         }
         _player.AddForce(force);
-        _player.velocity = ClampSpd(_player.velocity, _limitXzSpd, _limitYSpd);
-        //Debug.Log(new Vector2(_player.velocity.x, _player.velocity.z).magnitude);
-        //Debug.Log(_player.velocity.y);
+        var ylimit = _limitYSpd + (_stageLength - transform.position.y) / _stageLength * _addYSpd;
+        _player.velocity = ClampSpd(_player.velocity, _limitXzSpd, ylimit);
+        Debug.Log($"{_player.velocity}, {ylimit}");
     }
 
     /// <summary>
@@ -53,5 +72,17 @@ public class PlayerContoroller : MonoBehaviour
         }
         var yspd = Mathf.Abs(velocity.y) > ylimit ? MathF.Sign(velocity.y) * ylimit : velocity.y;
         return new Vector3(xz.x, yspd, xz.y);
+    }
+
+
+    private void Die()
+    {
+        gameObject.SetActive(false);
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        _hp -= collision.relativeVelocity.y;
     }
 }
