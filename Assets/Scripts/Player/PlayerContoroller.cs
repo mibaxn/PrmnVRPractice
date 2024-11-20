@@ -68,7 +68,7 @@ public class PlayerContoroller : MonoBehaviour
         Vector2 xz = new Vector2(velocity.x, velocity.z);
         if (xz.magnitude > xzlimit)
         {
-            xz = xz / xz.magnitude * xzlimit;
+            xz = xz.normalized * xzlimit;
         }
         var yspd = Mathf.Abs(velocity.y) > ylimit ? MathF.Sign(velocity.y) * ylimit : velocity.y;
         return new Vector3(xz.x, yspd, xz.y);
