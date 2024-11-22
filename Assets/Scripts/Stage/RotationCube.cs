@@ -5,10 +5,12 @@ using UnityEngine;
 public class RotationCube : MonoBehaviour
 {
     private float _spd;
+    [SerializeField] private float _min;
+    [SerializeField] private float _max;
 
     void Start()
     {
-        _spd = Random.Range(1, 10);
+        _spd = Random.Range(_min, _max);
         transform.position = new Vector3(0, transform.position.y, 0);
     }
 
