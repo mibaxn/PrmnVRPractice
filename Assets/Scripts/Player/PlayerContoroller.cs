@@ -7,9 +7,7 @@ public class PlayerContoroller : MonoBehaviour
 {
     private Rigidbody _player;
 
-    [Header("プレイヤーのHP.衝突時にy軸速さの分だけ減少する"), SerializeField]
-    private float _hp;
-    public float Hp { get => _hp; }
+    public float Hp { get; private set; }
 
     [Header("移動の時に加える力の大きさ"), SerializeField]
     private float _magForce;
@@ -26,15 +24,18 @@ public class PlayerContoroller : MonoBehaviour
     [Header("ステージの長さ"), SerializeField]
     private int _stageLength;
 
+    [Header("ゴール判定用のオブジェクト"), SerializeField] private Goal goal;
+
 
     void Start()
     {
         _player = GetComponent<Rigidbody>();
+        Hp = Singleton.MaxHp;
     }
 
     void Update()
     {
-        if (_hp <= 0) { Die(); }
+        if (Hp <= 0) { Die(); }
 
         var force = Vector3.zero;
         if (Input.GetKey(KeyCode.D))
@@ -77,12 +78,13 @@ public class PlayerContoroller : MonoBehaviour
 
     private void Die()
     {
-        gameObject.SetActive(false);
+        goal.ReachGoal();
     }
 
 
     private void OnCollisionEnter(Collision collision)
     {
-        _hp -= collision.relativeVelocity.y;
+        Hp -= collision.relativeVelocity.y;
+        Hp = Mathf.Clamp(Hp, 0, float.MaxValue);
     }
 }
